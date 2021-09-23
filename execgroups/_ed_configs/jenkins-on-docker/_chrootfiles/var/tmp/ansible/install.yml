@@ -1,0 +1,88 @@
+---
+- hosts: all
+  vars_files:
+    - vars/all.yml
+  remote_user: "{{ os_user }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Install Python
+      raw: apt -y update && apt install -y python
+
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
+    - name: Install Docker Module for Python
+      raw: pip3 install docker
+
+    - name: Install docker-compose
+      apt: name=docker-compose state=present
+
+    - name: Ensure docker build directory
+      file:
+        state: directory
+        owner: "root"
+        group: "root"
+        path: /var/tmp/docker
+
+    - name: Ensure Jenkins directory on docker host
+      file:
+        state: directory
+        owner: "root"
+        group: "root"
+        path: /var/lib/jenkins
+
+    - name: Copy Jenkins setup tar ball
+      copy: src=files/jenkins.tar.gz dest=/var/tmp/docker/jenkins.tar.gz
+
+    - name: Untar Jenkins tar ball
+      shell: cd /var/tmp/docker && tar xvfz jenkins.tar.gz && rm -rf jenkins.tar.gz
+
+    - name: Start up Jenkins with docker-compose
+      shell: cd /var/tmp/docker/jenkins && docker-compose build && docker-compose up -d
+
+    - name: Wait until Jenkins come up
+      shell: sleep 180
+
+    - name: Get initial admin password
+      shell: 'cat /var/lib/jenkins/secrets/initialAdminPassword'
+      register: admin_auth_token
+    
+    - name: Create CRUMB authentication request
+      uri:
+        url: 'http://localhost:8081/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'
+        user: admin
+        password: '{{ admin_auth_token.stdout }}'
+        force_basic_auth: yes
+        return_content: yes
+      register: crumb
+    
+    - name: Add Jenkins administration account
+      uri:
+        method: POST
+        url: 'http://localhost:8081/securityRealm/createAccountByAdmin'
+        user: admin
+        password: '{{ admin_auth_token.stdout }}'
+        force_basic_auth: yes
+        follow_redirects: all
+        headers:
+          Jenkins-Crumb: '{{ crumb.content.split(":")[1] }}'
+          Cookie: '{{ crumb.set_cookie }}'
+        body: 'username={{ jenkins_user }}&password1={{ jenkins_pass }}&password2={{ jenkins_pass }}&fullname={{ jenkins_fullname }}&email={{ jenkins_email }}'

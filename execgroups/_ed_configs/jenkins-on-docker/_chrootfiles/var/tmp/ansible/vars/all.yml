@@ -1,0 +1,6 @@
+---
+os_user: root
+jenkins_user: jenkins
+jenkins_pass: jenkins123
+jenkins_fullname: jenkins
+jenkins_email: jenkins@fake-email.com
