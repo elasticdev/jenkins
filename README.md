@@ -1,2 +1,2 @@
 # jenkins
-ElasticDev contribution repository for jenkins 
+ElasticDev contribution repository for Jenkins 
