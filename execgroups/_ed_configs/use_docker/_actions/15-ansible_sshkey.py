@@ -4,7 +4,8 @@ def default():
     env_vars = []
     shelloutconfigs = []
 
-    shelloutconfigs.append('elasticdev:::ansible::write_ssh_key')
+    env_vars.append('elasticdev:::ansible::ssh_key')
+    shelloutconfigs.append('elasticdev:::ansible::resource_wrapper')
 
     task['method'] = 'shelloutconfig'
     task['metadata'] = {'env_vars': env_vars,
