@@ -63,7 +63,10 @@ def run(stackargs):
     stack.logger.debug("z3"*32)
 
     env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
+    stack.logger.debug("z4"*32)
+
     env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
+    stack.logger.debug("z5"*32)
 
     inputargs = {"display":True}
     inputargs["human_description"] = 'Install Jenkins for Ansible'
