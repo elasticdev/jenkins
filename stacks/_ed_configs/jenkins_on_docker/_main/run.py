@@ -53,9 +53,13 @@ def run(stackargs):
     _hosts = { "all":[public_ip] }
 
     stack.logger.debug("z1"*32)
+    stack.logger.debug("")
     stack.logger.debug(_hosts)
+    stack.logger.debug("")
     stack.logger.debug("z2"*32)
+    stack.logger.debug("")
     stack.logger.debug(json.dumps(_hosts))
+    stack.logger.debug("")
     stack.logger.debug("z3"*32)
 
     env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
