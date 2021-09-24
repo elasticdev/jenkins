@@ -12,8 +12,8 @@ def _get_ssh_key(stack):
     _lookup = {"must_exists":True}
     _lookup["resource_type"] = "ssh_key_pair"
     _lookup["name"] = stack.ssh_key_name
-    _lookup["serialize"] = True
-    _lookup["serialize_keys"] = [ "private_key" ]
+    #_lookup["serialize"] = True
+    #_lookup["serialize_keys"] = [ "private_key" ]
 
     return stack.get_resource(decrypt=True,**_lookup)["private_key"]
 
@@ -48,7 +48,7 @@ def run(stackargs):
 
     env_vars = {"METHOD":"create"}
     env_vars["docker_exec_env".upper()] = stack.ansible_docker_exec_env
-    env_vars["ANSIBLE_DIR"] = "/var/tmp/ansible"
+    env_vars["ANSIBLE_DIR"] = "var/tmp/ansible"
     env_vars["STATEFUL_ID"] = stateful_id
 
     env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
