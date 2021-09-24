@@ -50,23 +50,11 @@ def run(stackargs):
     env_vars["docker_exec_env".upper()] = stack.ansible_docker_exec_env
     env_vars["ANSIBLE_DIR"] = "/var/tmp/ansible"
     env_vars["STATEFUL_ID"] = stateful_id
-    _hosts = { "all":[public_ip] }
-
-    stack.logger.debug("z1"*32)
-    stack.logger.debug("")
-    stack.logger.debug(_hosts)
-    stack.logger.debug("")
-    stack.logger.debug("z2"*32)
-    stack.logger.debug("")
-    stack.logger.debug(json.dumps(_hosts))
-    stack.logger.debug("")
-    stack.logger.debug("z3"*32)
-
-    env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
-    stack.logger.debug("z4"*32)
 
     env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
-    stack.logger.debug("z5"*32)
+
+    _hosts = { "all":[public_ip] }
+    env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
 
     inputargs = {"display":True}
     inputargs["human_description"] = 'Install Jenkins for Ansible'
@@ -74,9 +62,7 @@ def run(stackargs):
     inputargs["stateful_id"] = stateful_id
     inputargs["automation_phase"] = "infrastructure"
     inputargs["hostname"] = stack.hostname
-    inputargs["groups"] = stack.on_docker
-
-    stack.add_groups_to_host(**inputargs)
+    stack.on_docker.insert(**inputargs)
 
     # publish variables
     _publish_vars = {"hostname":stack.hostname}
