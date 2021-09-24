@@ -51,7 +51,7 @@ def run(stackargs):
     env_vars["ANSIBLE_DIR"] = "/var/tmp/ansible"
     env_vars["STATEFUL_ID"] = stateful_id
     env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps({"all":[public_ip]}))
-    env_vars["ANS_VAR_private_key_hash"] = stack.base64encode(private_key)
+    env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
 
     inputargs = {"display":True}
     inputargs["human_description"] = 'Install Jenkins for Ansible'
