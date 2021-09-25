@@ -15,7 +15,7 @@ def _get_ssh_key(stack):
     #_lookup["serialize"] = True
     #_lookup["serialize_keys"] = [ "private_key" ]
 
-    return stack.get_resource(decrypt=True,**_lookup)["private_key"]
+    return stack.get_resource(decrypt=True,**_lookup)[0]["private_key"]
 
 def run(stackargs):
 
