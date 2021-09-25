@@ -44,11 +44,9 @@ def run(stackargs):
     private_key = _get_ssh_key(stack)
     stateful_id = stack.random_id(size=10)
 
-    env_vars = {"METHOD":"create"}
+    env_vars = {"STATEFUL_ID":stateful_id}
     env_vars["docker_exec_env".upper()] = stack.ansible_docker_exec_env
     env_vars["ANSIBLE_DIR"] = "var/tmp/ansible"
-    env_vars["STATEFUL_ID"] = stateful_id
-
     env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
 
     _hosts = { "all":[public_ip] }
