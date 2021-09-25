@@ -55,6 +55,7 @@ def run(stackargs):
 
     _hosts = { "all":[public_ip] }
     env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
+    env_vars["ANS_VAR_exec_ymls"] = "install.yml"
     env_vars["ANSIBLE_EXEC_YMLS"] = "install.yml"
 
     inputargs = {"display":True}
