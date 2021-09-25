@@ -12,8 +12,6 @@ def _get_ssh_key(stack):
     _lookup = {"must_exists":True}
     _lookup["resource_type"] = "ssh_key_pair"
     _lookup["name"] = stack.ssh_key_name
-    #_lookup["serialize"] = True
-    #_lookup["serialize_keys"] = [ "private_key" ]
 
     return stack.get_resource(decrypt=True,**_lookup)[0]["private_key"]
 
