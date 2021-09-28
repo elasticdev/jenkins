@@ -26,8 +26,6 @@ def run(stackargs):
     stack.parse.add_required(key="hostname")
     stack.parse.add_required(key="ssh_key_name")
     stack.parse.add_optional(key="vm_username",default="root")
-
-    stack.parse.add_optional(key="publish_creds",default=True,null_allowed=True)
     stack.parse.add_optional(key="ansible_docker_exec_env",default="elasticdev/ansible-run-env")
 
     # Add execgroup
