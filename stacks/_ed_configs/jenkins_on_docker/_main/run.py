@@ -29,10 +29,12 @@ def run(stackargs):
 
     # Add execgroup
     stack.add_execgroup("elasticdev:::jenkins::on_docker")
+    stack.add_substack('elasticdev:::ed_core::publish_host_file')
 
     # Initialize 
     stack.init_variables()
     stack.init_execgroups()
+    stack.init_substacks()
 
     instance_info = _get_instance_info(stack,stack.hostname)
     public_ip = instance_info["public_ip"]
@@ -67,5 +69,16 @@ def run(stackargs):
     _publish_vars["private_key_hash"] = _private_key_hash
 
     stack.publish(_publish_vars)
+
+    # fetch and publish jenkins admin password
+    default_values = { "hostname":stack.hostname }
+    default_values["ssh_key_name"] = stack.ssh_key_name
+    default_values["key"] = "init_password"
+    default_values["remote"] = "/var/lib/jenkins/secrets/initialAdminPassword"
+
+    inputargs = {"default_values":default_values}
+    inputargs["automation_phase"] = "infrastructure"
+    inputargs["human_description"] = 'Publish jenkins admin init password'
+    stack.publish_host_file.insert(display=True,**inputargs)
 
     return stack.get_results()
