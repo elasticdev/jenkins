@@ -74,7 +74,7 @@ def run(stackargs):
     default_values = { "hostname":stack.hostname }
     default_values["ssh_key_name"] = stack.ssh_key_name
     default_values["key"] = "init_password"
-    default_values["remote"] = "/var/lib/jenkins/secrets/initialAdminPassword"
+    default_values["remote_file"] = "/var/lib/jenkins/secrets/initialAdminPassword"
 
     inputargs = {"default_values":default_values}
     inputargs["automation_phase"] = "infrastructure"
