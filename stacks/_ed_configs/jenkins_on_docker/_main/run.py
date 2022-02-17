@@ -74,9 +74,13 @@ def run(stackargs):
     default_values = { "hostname":stack.hostname }
     default_values["ssh_key_name"] = stack.ssh_key_name
     default_values["key"] = "init_password"
-    default_values["remote_file"] = "/var/lib/jenkins/secrets/initialAdminPassword"
 
-    inputargs = {"default_values":default_values}
+    overide_values = { "remote_file": "/var/lib/jenkins/secrets/initialAdminPassword" }
+    overide_values["key"] = "init_password"
+
+    inputargs = {"default_values":default_values,
+                 "overide_values":overide_values}
+
     inputargs["automation_phase"] = "infrastructure"
     inputargs["human_description"] = 'Publish jenkins admin init password'
     stack.publish_host_file.insert(display=True,**inputargs)
