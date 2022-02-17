@@ -73,7 +73,6 @@ def run(stackargs):
     # fetch and publish jenkins admin password
     default_values = { "hostname":stack.hostname }
     default_values["ssh_key_name"] = stack.ssh_key_name
-    default_values["key"] = "init_password"
 
     overide_values = { "remote_file": "/var/lib/jenkins/secrets/initialAdminPassword" }
     overide_values["key"] = "init_password"
