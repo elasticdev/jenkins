@@ -25,6 +25,7 @@ def run(stackargs):
     # Add default variables
     stack.parse.add_required(key="hostname")
     stack.parse.add_required(key="ssh_key_name")
+    stack.parse.add_required(key="publish_private_key",default="null")
     stack.parse.add_optional(key="ansible_docker_exec_env",default="elasticdev/ansible-run-env")
 
     # Add execgroup
@@ -66,7 +67,9 @@ def run(stackargs):
     # publish variables
     _publish_vars = {"hostname":stack.hostname}
     _publish_vars["public_ip"] = public_ip
-    _publish_vars["private_key_hash"] = _private_key_hash
+
+    if stack.publish_private_key:
+        _publish_vars["private_key_hash"] = _private_key_hash
 
     stack.publish(_publish_vars)
 
