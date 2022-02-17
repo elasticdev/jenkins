@@ -66,7 +66,9 @@ def run(stackargs):
 
     # publish variables
     _publish_vars = {"hostname":stack.hostname}
-    _publish_vars["public_ip"] = public_ip
+    _publish_vars["jenkins_ipaddress"] = public_ip
+    _publish_vars["jenkins_url"] = "https://{}".format(public_ip)
+    _publish_vars["jenkins_user"] = "admin"
 
     if stack.publish_private_key:
         _publish_vars["private_key_hash"] = _private_key_hash
@@ -78,7 +80,7 @@ def run(stackargs):
     default_values["ssh_key_name"] = stack.ssh_key_name
 
     overide_values = { "remote_file": "/var/lib/jenkins/secrets/initialAdminPassword" }
-    overide_values["key"] = "init_password"
+    overide_values["key"] = "jenkins_password"
 
     inputargs = {"default_values":default_values,
                  "overide_values":overide_values}
