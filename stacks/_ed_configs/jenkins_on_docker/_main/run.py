@@ -25,7 +25,6 @@ def run(stackargs):
     # Add default variables
     stack.parse.add_required(key="hostname")
     stack.parse.add_required(key="ssh_key_name")
-    stack.parse.add_optional(key="vm_username",default="root")
     stack.parse.add_optional(key="ansible_docker_exec_env",default="elasticdev/ansible-run-env")
 
     # Add execgroup
@@ -38,14 +37,16 @@ def run(stackargs):
     instance_info = _get_instance_info(stack,stack.hostname)
     public_ip = instance_info["public_ip"]
 
-    # get ssh_key
-    private_key = _get_ssh_key(stack)
+    # get ssh_key and convert to base64 string
+    _private_key_hash = stack.b64_encode(_get_ssh_key(stack))
+
+    # generate stateful id
     stateful_id = stack.random_id(size=10)
 
     env_vars = {"STATEFUL_ID":stateful_id}
     env_vars["docker_exec_env".upper()] = stack.ansible_docker_exec_env
     env_vars["ANSIBLE_DIR"] = "var/tmp/ansible"
-    env_vars["ANS_VAR_private_key_hash"] = stack.b64_encode(private_key)
+    env_vars["ANS_VAR_private_key_hash"] = _private_key_hash
 
     _hosts = { "all":[public_ip] }
     env_vars["ANS_VAR_hosts"] = stack.b64_encode(json.dumps(_hosts))
@@ -63,6 +64,7 @@ def run(stackargs):
     # publish variables
     _publish_vars = {"hostname":stack.hostname}
     _publish_vars["public_ip"] = public_ip
+    _publish_vars["private_key_hash"] = _private_key_hash
 
     stack.publish(_publish_vars)
 
